@@ -1,0 +1,18 @@
+[submodule "bno055_usb_stick"]
+	path = bno055_usb_stick
+	url = git@github.com:yoshito-n-students/bno055_usb_stick.git
+[submodule "bno055_usb_stick_msgs"]
+	path = bno055_usb_stick_msgs
+	url = git@github.com:yoshito-n-students/bno055_usb_stick_msgs.git
+[submodule "affine_invariant_features"]
+	path = affine_invariant_features
+	url = git@github.com:yoshito-n-students/affine_invariant_features.git
+[submodule "label_detection"]
+	path = label_detection
+	url = git@github.com:yoshito-n-students/label_detection.git
+[submodule "image_reprojection"]
+	path = image_reprojection
+	url = git@github.com:yoshito-n-students/image_reprojection.git
+[submodule "object_detection_msgs"]
+	path = object_detection_msgs
+	url = git@github.com:yoshito-n-students/object_detection_msgs.git
