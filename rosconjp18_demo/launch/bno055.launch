@@ -1,0 +1,11 @@
+<launch>
+
+    <node name="bno055_driver" pkg="bno055_usb_stick" type="bno055_usb_stick_node" output="screen">
+        <param name="port" value="/dev/ttyACM0"/>
+        <param name="publish_tf" value="true"/>
+    </node>
+
+    <node name="bno055_visualizer" pkg="rviz" type="rviz" 
+          args="-d $(find rosconjp18_demo)/config/bno055_visualizer.rviz" output="screen"/>
+
+</launch>

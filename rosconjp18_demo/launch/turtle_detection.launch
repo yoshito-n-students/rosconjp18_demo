@@ -1,0 +1,30 @@
+<launch>
+    <node name="label_detector" pkg="nodelet" type="nodelet" args="manager" output="screen"/>
+
+    <node name="label_detector_loader" pkg="nodelet" type="nodelet" 
+          args="load label_detection/LabelDetector label_detector" output="screen">
+        <remap from="image_raw" to="image_raw"/>
+        <remap from="image_out" to="image_label"/>
+        <remap from="labels_out" to="labels"/>
+        <rosparam subst_value="true">
+            image_transport: raw
+            desired_encoding: bgr8
+            reference_directory: $(find rosconjp18_demo)/result_file/
+            parameter_file: $(find rosconjp18_demo)/param_file/affine_sift.yml
+            match_stripes: -1.
+            match_ratio: 0.015
+            republish_image: true
+        </rosparam>
+    </node>
+
+    <node name="label_drawer_loader" pkg="nodelet" type="nodelet" 
+          args="load object_drawer/ObjectDrawer label_detector" output="screen">
+        <remap from="image_raw" to="image_label"/>
+        <remap from="objects_in" to="labels"/>
+        <remap from="image_out" to="image_annotated"/>
+    </node>
+
+    <node name="label_view" pkg="image_view" type="image_view" output="screen">
+        <remap from="image" to="image_annotated"/>
+    </node>
+</launch>
