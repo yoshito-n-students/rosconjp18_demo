@@ -1,0 +1,7 @@
+%YAML:1.0
+---
+TargetDescription:
+   package: rosconjp18_demo
+   path: "logo/image/ROSConJP_h400.jpg"
+   md5: "70899f3f9796c1fa064f826353bf67a8"
+   contour: [ [ 0, 0 ], [ 387, 0 ], [ 387, 399 ], [ 0, 399 ] ]
