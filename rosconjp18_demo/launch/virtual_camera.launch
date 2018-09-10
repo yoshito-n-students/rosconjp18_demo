@@ -9,8 +9,8 @@
         <param name="camera_name" value="insta360"/>
     </node>
 
-    <node name="insta360_spritter" pkg="nodelet" type="nodelet"
-          args="standalone image_reprojection_plugins/DualFisheyeSplitter node" output="screen">
+    <node name="insta360_splitter" pkg="nodelet" type="nodelet"
+          args="standalone image_reprojection_plugins/DualFisheyeSplitter" output="screen">
         <remap from="image" to="insta360/image"/>
         <remap from="left/image" to="insta360/front/image"/>
         <remap from="right/image" to="insta360/back/image"/>
