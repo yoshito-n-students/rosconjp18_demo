@@ -28,6 +28,10 @@
 
     <node name="insta360_air_front_to_back" pkg="tf" type="static_transform_publisher"
           args="0 0 -0.01 -0.07 3.1415 -0.03 insta360/front insta360/back 100" output="screen"/>
+    <node name="insta360_air_front_to_flipped" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 1.5708 -1.5708 0 insta360/front insta360/flipped_front 100" output="screen"/>
+    <node name="pinhole_camera_to_flipped" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 -1.5708 0 -1.5708 flipped_pinhole_camera pinhole_camera 100" output="screen"/>
 
     <node name="sphere_surface_publisher" pkg="image_reprojection_plugins" type="static_sphere_publisher"
           output="screen">
@@ -42,8 +46,8 @@
     <node name="bno055_driver" pkg="bno055_usb_stick" type="bno055_usb_stick_node" output="screen">
         <param name="port" value="/dev/serial/by-id/usb-Bosch_Sensortec_Bosch_Sensortec_BNO_stick_001-if00"/>
         <param name="publish_tf" value="true"/>
-        <param name="tf_frame_id" value="insta360/front"/>
-        <param name="tf_child_frame_id" value="pinhole_camera"/>
+        <param name="tf_frame_id" value="insta360/flipped_front"/>
+        <param name="tf_child_frame_id" value="flipped_pinhole_camera"/>
     </node>
 
     <node name="pinhole_camera_driver" pkg="nodelet" type="nodelet" 
