@@ -81,13 +81,13 @@
         </rosparam>
     </node>
 
-    <node name="label_detector" pkg="nodelet" type="nodelet" args="manager" output="screen"/>
+    <node name="turtle_detector" pkg="nodelet" type="nodelet" args="manager" output="screen"/>
 
-    <node name="label_detector_loader" pkg="nodelet" type="nodelet" 
-          args="load label_detection/LabelDetector label_detector" output="screen">
-        <remap from="image_raw" to="image_raw"/>
-        <remap from="image_out" to="image_label"/>
-        <remap from="labels_out" to="labels"/>
+    <node name="turtle_detector_loader" pkg="nodelet" type="nodelet" 
+          args="load label_detection/LabelDetector turtle_detector" output="screen">
+        <remap from="image_raw" to="pinhole_camera/image"/>
+        <remap from="image_out" to="turtle_detector/image"/>
+        <remap from="labels_out" to="turtle_detector/labels"/>
         <rosparam subst_value="true">
             image_transport: raw
             desired_encoding: bgr8
@@ -99,15 +99,15 @@
         </rosparam>
     </node>
 
-    <node name="label_drawer_loader" pkg="nodelet" type="nodelet" 
-          args="load object_drawer/ObjectDrawer label_detector" output="screen">
-        <remap from="image_raw" to="image_label"/>
-        <remap from="objects_in" to="labels"/>
-        <remap from="image_out" to="image_annotated"/>
+    <node name="turtle_drawer_loader" pkg="nodelet" type="nodelet" 
+          args="load object_drawer/ObjectDrawer turtle_detector" output="screen">
+        <remap from="image_raw" to="turtle_detector/image"/>
+        <remap from="objects_in" to="turtle_detector/labels"/>
+        <remap from="image_out" to="turtle_detector/annotated_image"/>
     </node>
 
-    <node name="label_viewer" pkg="rqt_gui" type="rqt_gui"
-          args="--perspective-file $(find rosconjp18_demo)/config/label_viewer.perspective" output="screen">
+    <node name="turtle_detection_visualizer" pkg="rviz" type="rviz"
+          args="-d $(find rosconjp18_demo)/config/turtle_detection_visualizer.rviz" output="screen">
     </node>
 
 </launch>
