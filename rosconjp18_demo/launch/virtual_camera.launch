@@ -81,8 +81,8 @@
         </rosparam>
     </node>
 
-    <node name="camera_viewer" pkg="rqt_gui" type="rqt_gui"
-          args="--perspective-file $(find rosconjp18_demo)/config/camera_viewer.perspective" output="screen">
+    <node name="virtual_camera_visualizer" pkg="rviz" type="rviz"
+          args="-d $(find rosconjp18_demo)/config/virtual_camera_visualizer.rviz" output="screen">
     </node>
 
 </launch>
