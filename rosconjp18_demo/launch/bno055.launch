@@ -8,4 +8,8 @@
     <node name="bno055_visualizer" pkg="rviz" type="rviz" 
           args="-d $(find rosconjp18_demo)/config/bno055_visualizer.rviz" output="screen"/>
 
+    <node name="webcam_driver" pkg="usb_cam" type="usb_cam_node" output="screen">
+        <param name="video_device" value="/dev/v4l/by-id/usb-Generic_Front_Camera_200901010001-video-index0"/>
+    </node>
+
 </launch>
