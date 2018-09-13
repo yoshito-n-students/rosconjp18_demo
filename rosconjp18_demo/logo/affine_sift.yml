@@ -1,0 +1,9 @@
+%YAML:1.0
+---
+AIFParameters:
+   SIFTParameters:
+      nfeatures: 0
+      nOctaveLayers: 3
+      contrastThreshold: 4.0000000000000001e-02
+      edgeThreshold: 10.
+      sigma: 1.6000000000000001e+00

@@ -1,0 +1,117 @@
+<launch>
+
+    <node name="insta360_driver" pkg="usb_cam" type="usb_cam_node">
+        <remap from="~image_raw" to="insta360/image"/>
+        <param name="video_device" value="/dev/v4l/by-id/usb-Arashi_Vision_Insta360_Air-video-index0"/>
+        <param name="pixel_format" value="mjpeg"/>
+        <param name="image_width" value="1472"/>
+        <param name="image_height" value="736"/>
+        <param name="camera_name" value="insta360"/>
+    </node>
+
+    <node name="insta360_splitter" pkg="nodelet" type="nodelet"
+          args="standalone image_reprojection_plugins/DualFisheyeSplitter" output="screen">
+        <remap from="image" to="insta360/image"/>
+        <remap from="left/image" to="insta360/front/image"/>
+        <remap from="right/image" to="insta360/back/image"/>
+        <rosparam ns="left">
+            frame_id: insta360/front
+            camera_name: insta360_front
+            camera_info_url: package://rosconjp18_demo/camera_info/insta360_front.yml
+        </rosparam>
+        <rosparam ns="right">
+            frame_id: insta360/back
+            camera_name: insta360_back
+            camera_info_url: package://rosconjp18_demo/camera_info/insta360_back.yml
+        </rosparam>
+    </node>
+
+    <node name="insta360_air_front_to_back" pkg="tf" type="static_transform_publisher"
+          args="0 0 -0.01 -0.07 3.1415 -0.03 insta360/front insta360/back 100" output="screen"/>
+    <node name="insta360_air_front_to_flipped" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 1.5708 -1.5708 0 insta360/front insta360/flipped_front 100" output="screen"/>
+    <node name="pinhole_camera_to_flipped" pkg="tf" type="static_transform_publisher"
+          args="0 0 0 -1.5708 0 -1.5708 flipped_pinhole_camera pinhole_camera 100" output="screen"/>
+
+    <node name="sphere_surface_publisher" pkg="image_reprojection_plugins" type="static_sphere_publisher"
+          output="screen">
+        <remap from="sphere" to="sphere_surface"/>
+        <rosparam>
+            frame_id: pinhole_camera
+            center: [0., 0., 0.]
+            radius: 1.
+        </rosparam>
+    </node>
+
+    <node name="bno055_driver" pkg="bno055_usb_stick" type="bno055_usb_stick_node" output="screen">
+        <param name="port" value="/dev/serial/by-id/usb-Bosch_Sensortec_Bosch_Sensortec_BNO_stick_001-if00"/>
+        <param name="publish_tf" value="true"/>
+        <param name="tf_frame_id" value="insta360/flipped_front"/>
+        <param name="tf_child_frame_id" value="flipped_pinhole_camera"/>
+    </node>
+
+    <node name="pinhole_camera_driver" pkg="nodelet" type="nodelet" 
+          args="standalone image_reprojection/ImageReprojection" output="screen">
+        <remap from="src_image0" to="insta360/front/image"/>
+        <rosparam ns="src_camera0">
+            model: image_reprojection_plugins/FisheyeCameraModel
+            fov: 3.1415
+            image_transport: compressed
+        </rosparam>
+
+        <remap from="src_image1" to="insta360/back/image"/>
+        <rosparam ns="src_camera1">
+            model: image_reprojection_plugins/FisheyeCameraModel
+            fov: 3.1415
+            image_transport: compressed
+        </rosparam>
+
+        <remap from="surface" to="sphere_surface"/>
+        <rosparam ns="surface">
+            model: image_reprojection_plugins/SphereSurfaceModel
+        </rosparam>
+
+        <remap from="dst_image" to="pinhole_camera/image"/>
+        <rosparam ns="dst_camera" subst_value="true">
+            model: image_reprojection_plugins/PinholeCameraModel
+            info_file: $(find rosconjp18_demo)/camera_info/pinhole_camera.yml
+        </rosparam>
+
+        <rosparam ns="map_update">
+            background: true
+            frequency: 10
+            binning_x: 16
+            binning_y: 16
+        </rosparam>
+    </node>
+
+    <node name="turtle_detector" pkg="nodelet" type="nodelet" args="manager" output="screen"/>
+
+    <node name="turtle_detector_loader" pkg="nodelet" type="nodelet" 
+          args="load label_detection/LabelDetector turtle_detector" output="screen">
+        <remap from="image_raw" to="pinhole_camera/image"/>
+        <remap from="image_out" to="turtle_detector/image"/>
+        <remap from="labels_out" to="turtle_detector/labels"/>
+        <rosparam subst_value="true">
+            image_transport: raw
+            desired_encoding: bgr8
+            reference_directory: $(find rosconjp18_demo)/logo/features/h400/
+            parameter_file: $(find rosconjp18_demo)/logo/affine_sift.yml
+            match_stripes: -1.
+            match_ratio: 0.015
+            republish_image: true
+        </rosparam>
+    </node>
+
+    <node name="turtle_drawer_loader" pkg="nodelet" type="nodelet" 
+          args="load object_drawer/ObjectDrawer turtle_detector" output="screen">
+        <remap from="image_raw" to="turtle_detector/image"/>
+        <remap from="objects_in" to="turtle_detector/labels"/>
+        <remap from="image_out" to="turtle_detector/annotated_image"/>
+    </node>
+
+    <node name="turtle_detection_visualizer" pkg="rviz" type="rviz"
+          args="-d $(find rosconjp18_demo)/config/turtle_detection_visualizer.rviz" output="screen">
+    </node>
+
+</launch>
