@@ -16,3 +16,6 @@
 [submodule "object_detection_msgs"]
 	path = object_detection_msgs
 	url = git@github.com:yoshito-n-students/object_detection_msgs.git
+[submodule "object_drawer"]
+	path = object_drawer
+	url = git@github.com:yoshito-n-students/object_drawer.git
